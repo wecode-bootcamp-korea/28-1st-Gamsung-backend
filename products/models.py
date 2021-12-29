@@ -43,3 +43,6 @@ class Storage(models.Model):
 class Product_Storage(models.Model):
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     storage = models.ForeignKey('Storage', on_delete=models.CASCADE)
+    
+    class Meta:
+        db_table = 'products_storages'

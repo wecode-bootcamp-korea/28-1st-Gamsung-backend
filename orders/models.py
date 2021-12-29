@@ -1,10 +1,11 @@
-from django.db       import models
+from django.db   import models
 
 from core.models import TimeStampModel
 
 class Order(TimeStampModel):
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
-    cart = models.ForeignKey('carts.Cart', on_delete=models.CASCADE)
+    user            = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    cart            = models.ForeignKey('carts.Cart', on_delete=models.CASCADE)
+    tracking_number = models.CharField(max_length=50, unique=True, null=True)
 
     class Meta:
         db_table = 'orders'

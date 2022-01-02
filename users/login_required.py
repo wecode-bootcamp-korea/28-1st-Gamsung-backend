@@ -6,7 +6,7 @@ from my_settings       import SECRET_KEY, ALGORITHM
 from models            import User
 
 
-def login_deco(func):
+def login_required(func):
     def wrapper(self, request, *args, **kwargs):
         try:
             access_token = request.headers.get('Authorization', None)

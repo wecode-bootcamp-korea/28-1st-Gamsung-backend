@@ -10,8 +10,6 @@ from users.models               import User
 from my_settings                import SECRET_KEY, ALGORITHM
 from users.validator            import validate_email, validate_password, validate_first_name, validate_last_name, validate_dob
 
-# Create your views here.
-
 class SignUpView(View):
     def post(self, request):
         data          = json.loads(request.body)
@@ -41,16 +39,16 @@ class SignUpView(View):
                               .decode('utf-8')
 
             User.objects.create(
-                email    = email,
-                password = hashed_password,
-                first_name = first_name,
-                last_name  = last_name,
+                email         = email,
+                password      = hashed_password,
+                first_name    = first_name,
+                last_name     = last_name,
                 date_of_birth = date_of_birth,
             )
             return JsonResponse({"message":"SUCCESS"}, status=201)
 
         except KeyError:
-            return JsonResponse({"message": "KEY_CRROR"}, status=400)
+            return JsonResponse({"message": "KEY_ERROR"}, status=400)
 
 class SignInView(View):
     def post(self, request):
@@ -62,18 +60,15 @@ class SignInView(View):
             if not User.objects.filter(email=email).exists():
                 return JsonResponse({"message": "INVALID_USER"}, status=400)
             
+            user_id         = User.objects.get(email=email).id
             hashed_password = User.objects.get(email=email).password.encode('utf-8')
 
             if not bcrypt.checkpw(password, hashed_password):
-                return ValidationError('Invalid Password')
+                return JsonResponse({"message": "INVALID_USER"}, status=400)
             
-            user_id     = User.objects.get(email=email).id
-            encoded_jwt = jwt.encode({"id": user_id}, SECRET_KEY, algorithm=ALGORITHM)
+            access_token = jwt.encode({"id": user_id}, SECRET_KEY, algorithm=ALGORITHM)
             
-            return JsonResponse({"token": encoded_jwt}, status=200)
+            return JsonResponse({"token": access_token}, status=200)
         
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
-            
-
-

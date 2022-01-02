@@ -16,7 +16,7 @@ def validate_last_name(last_name):
     LAST_NAME_REGEX = "^[A-Za-z]{1,}"
     return re.match(LAST_NAME_REGEX, last_name)
 
-def validate_dob(date_of_birth):
+def validate_date_of_birth(date_of_birth):
     DATE_OF_BIRTH_REGEX = "^(\d{4})-(\d{2})-(\d{2})"
     return re.match(DATE_OF_BIRTH_REGEX, date_of_birth)
 

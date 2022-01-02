@@ -8,7 +8,7 @@ class User(TimeStampModel):
     date_of_birth = models.DateField(auto_now=False)
     email         = models.CharField(max_length=100, unique=True)
     password      = models.CharField(max_length=256)
-    
+
     class Meta:
         db_table = 'users'
     

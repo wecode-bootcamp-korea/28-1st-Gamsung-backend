@@ -8,7 +8,7 @@ from django.core.exceptions     import ValidationError
 
 from users.models               import User
 from my_settings                import SECRET_KEY, ALGORITHM
-from users.validator            import validate_email, validate_password, validate_first_name, validate_last_name, validate_dob
+from utils.validator            import validate_email, validate_password, validate_first_name, validate_last_name, validate_dob
 
 class SignUpView(View):
     def post(self, request):

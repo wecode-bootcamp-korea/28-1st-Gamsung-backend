@@ -8,7 +8,7 @@ from django.core.exceptions     import ValidationError
 
 from users.models               import User
 from my_settings                import SECRET_KEY, ALGORITHM
-from utils.validator            import validate_email, validate_password, validate_first_name, validate_last_name, validate_dob
+from utils.validator            import validate_email, validate_password, validate_first_name, validate_last_name, validate_date_of_birth
 
 class SignUpView(View):
     def post(self, request):
@@ -32,7 +32,7 @@ class SignUpView(View):
             if not (validate_first_name(first_name) and validate_last_name(last_name)):
                 return JsonResponse({"message": "Name format is invalid"}, status=400)
 
-            if not validate_dob(date_of_birth):
+            if not validate_date_of_birth(date_of_birth):
                 return JsonResponse({"message": "Date of Birth format is invalid"}, status=400)
 
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())\

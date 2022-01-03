@@ -16,7 +16,7 @@ class SubCategory(models.Model):
 class Product(models.Model):
     name          = models.CharField(max_length=30)
     subcategory   = models.ForeignKey('SubCategory', on_delete=models.SET_NULL, null=True)
-    serial_number = models.CharField(max_length=30)
+    serial_number = models.CharField(max_length=30,unique=True)
     price         = models.DecimalField(max_digits=8, decimal_places=2, null=True)
     stock         = models.PositiveIntegerField(default=1)
 
@@ -26,13 +26,19 @@ class Product(models.Model):
     def __str__(self):
         return self.product
 
-class Image(models.Model):
+class MainImage(models.Model):
     product    = models.ForeignKey('Product', on_delete=models.CASCADE)
     main_url   = models.URLField(max_length=2000) 
+
+    class Meta:
+        db_table = 'main_images'
+
+class DetailImage(models.Model):
+    product    = models.ForeignKey('Product', on_delete=models.CASCADE)
     detail_url = models.URLField(max_length=2000)
 
     class Meta:
-        db_table = 'images'
+        db_table = 'detail_images'
 
 class Storage(models.Model):
     storage = models.CharField(max_length=10, default=256)

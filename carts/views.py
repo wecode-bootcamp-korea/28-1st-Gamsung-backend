@@ -11,7 +11,7 @@ class CartView(View):
     @login_required
     def get(self, request):
 
-        carts = Cart.objects.select_related('user__product').filter(user_id = request.user_id)
+        carts     = Cart.objects.select_related('user__product').filter(user_id = request.user_id)
         catalogue = {
             "cart_list" : [{
                 "id"         : cart.id,
@@ -29,7 +29,8 @@ class CartView(View):
         user_id    = request.user.id
         product_id = data['product_id']
         quantity   = data['quantity']
-        cart, created = Cart.objects.get_or_create(
+        
+        cart = Cart.objects.get_or_create(
             user_id    = user_id,
             product_id = product_id
         )            

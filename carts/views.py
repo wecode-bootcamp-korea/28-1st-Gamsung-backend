@@ -66,7 +66,7 @@ class CartView(View):
     @login_required
     def delete(self, request):
         try:
-            user = request.user
+            user    = request.user
             cart_id = request.GET.get('id')
 
             cart = Cart.objects.get(user_id=user.id, id=cart_id)

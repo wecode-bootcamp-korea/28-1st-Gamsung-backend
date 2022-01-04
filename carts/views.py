@@ -10,28 +10,27 @@ from utils.login_required   import login_required
 class CartView(View):
     @login_required
     def get(self, request):
-
-        carts     = Cart.objects.select_related('user__product').filter(user_id = request.user_id)
-        catalogue = {
-            "cart_list" : [{
+        user      = request.user
+        carts     = Cart.objects.select_related('user__product').filter(user_id = user.id)
+        cart_list = [{
                 "id"         : cart.id,
                 "product_id" : cart.product.id,
                 "price"      : cart.product.price,
                 "quantity"   : cart.quantity,
                 "detail_url" : cart.product.detail_url,
             }for cart in carts]
-        }
-        return JsonResponse({"cart_list" : catalogue}, status=200)
+
+        return JsonResponse({"cart_list" : cart_list}, status=200)
 
     @login_required
     def post(self, request):
         data       = json.loads(request.body)
-        user_id    = request.user.id
+        user       = request.user
         product_id = data['product_id']
         quantity   = data['quantity']
-        
-        cart = Cart.objects.get_or_create(
-            user_id    = user_id,
+
+        cart, created  = Cart.objects.get_or_create(
+            user_id    = user.id,
             product_id = product_id
         )            
         cart.quantity += quantity

@@ -13,4 +13,4 @@ class User(TimeStampModel):
         db_table = 'users'
     
     def __str__(self):
-        return self.user
+        return self.email

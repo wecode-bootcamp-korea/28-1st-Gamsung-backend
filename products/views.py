@@ -14,8 +14,8 @@ class ListView(View):
             subcategory         = SubCategory.objects.get(product=product)
             main_image          = MainImage.objects.get(product=product).main_url
             detail_images_query = DetailImage.objects.filter(product=product)
-            storage = ProductStorage.objects.get(product=product).storage
-            detail_images_list = []
+            storage             = ProductStorage.objects.get(product=product).storage
+            detail_images_list  = []
             for image in detail_images_query:
                 detail_images_list.append(image.detail_url)
             products_list.append({'name':product.name, 'subcategory':subcategory.name, 'serial_number':product.serial_number, 'storage':storage.storage, 'price':product.price, 'main_image':main_image, 'detail_images':detail_images_list})
@@ -25,11 +25,11 @@ class ListView(View):
 class DetailView(View):
     def get(self, request, serial_number):
         product_details_list = []
-        product = Product.objects.get(serial_number=serial_number)
-        main_image = MainImage.objects.get(product=product).main_url
-        storage = ProductStorage.objects.get(product=product).storage
-        detail_images_query = DetailImage.objects.filter(product=product)
-        detail_images_list = []
+        product              = Product.objects.get(serial_number=serial_number)
+        main_image           = MainImage.objects.get(product=product).main_url
+        storage              = ProductStorage.objects.get(product=product).storage
+        detail_images_query  = DetailImage.objects.filter(product=product)
+        detail_images_list   = []
         for image in detail_images_query:
             detail_images_list.append(image.detail_url)
         product_details_list.append({'name':product.name, 'serial_number':product.serial_number, 'storage':storage.storage, 'price':product.price, 'main_image':main_image, 'detail_images':detail_images_list})

@@ -59,12 +59,20 @@ class CartView(View):
             cart.quantity += 1
         if quantity == -1:
             cart.quantity -= 1
-            if cart.quantity <= 1:
-                cart.quantity == 1
+            if cart.quantity < 1:
                 pass
         cart.save()
 
     @login_required
     def delete(self, request):
-        data = json.loads(request.body)
-        
+        try:
+            user = request.user
+            cart_id = request.GET.get('id')
+
+            cart = Cart.objects.get(user_id=user.id, id=cart_id)
+            cart.delete()
+
+            return JsonResponse({"message" : "DELETED"}, status=200)
+
+        except KeyError:
+            JsonResponse({"message" : "KEY ERROR"}, status=400)

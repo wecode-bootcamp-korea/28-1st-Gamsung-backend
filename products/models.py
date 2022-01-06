@@ -1,4 +1,6 @@
-from django.db import models
+from django.db   import models
+
+from core.models import TimeStampModel
 
 class Category(models.Model):
     name = models.CharField(max_length=30)
@@ -13,7 +15,7 @@ class SubCategory(models.Model):
     class Meta:
         db_table = 'subcategories'
 
-class Product(models.Model):
+class Product(TimeStampModel):
     name          = models.CharField(max_length=30)
     subcategory   = models.ForeignKey('SubCategory', on_delete=models.SET_NULL, null=True)
     serial_number = models.CharField(max_length=30,unique=True)
@@ -25,6 +27,20 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+class ProductStorage(models.Model):
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    storage = models.ForeignKey('Storage', on_delete=models.CASCADE)
+    
+    class Meta:
+        db_table = 'products_storages'
+
+class Storage(models.Model):
+    type    = models.CharField(max_length=10, default=256)
+    product = models.ManyToManyField(Product, related_name='storage', through=ProductStorage)
+
+    class Meta:
+        db_table = 'storages'
 
 class MainImage(models.Model):
     product    = models.ForeignKey('Product', on_delete=models.CASCADE)
@@ -39,16 +55,3 @@ class DetailImage(models.Model):
 
     class Meta:
         db_table = 'detail_images'
-
-class Storage(models.Model):
-    storage = models.CharField(max_length=10, default=256)
-
-    class Meta:
-        db_table = 'storages'
-
-class ProductStorage(models.Model):
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
-    storage = models.ForeignKey('Storage', on_delete=models.CASCADE)
-    
-    class Meta:
-        db_table = 'products_storages'

@@ -46,7 +46,7 @@ class ProductDetailView(View):
         try:
             product              = Product.objects.get(serial_number=serial_number)
             product_details_list = [{
-                    'id'   : product.id,
+                    'id'           : product.id,
                     'name'         : product.name, 
                     'serial_number': product.serial_number, 
                     'storage'      : product.storage.get().type, 

@@ -21,7 +21,7 @@ class ProductListView(View):
         filter_options  = request.GET.getlist('filter_options', None)
         search_content  = request.GET.get('search_content', None)
         offset          = int(request.GET.get('offset', 0))
-        limit           = int(request.GET.get('limit', 10))
+        limit           = int(request.GET.get('limit', 50))
 
         product_condition = Q()
         if filter_options:
@@ -46,6 +46,7 @@ class ProductDetailView(View):
         try:
             product              = Product.objects.get(serial_number=serial_number)
             product_details_list = [{
+                    'product_id'   : product.id,
                     'name'         : product.name, 
                     'serial_number': product.serial_number, 
                     'storage'      : product.storage.get().type, 

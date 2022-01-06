@@ -27,7 +27,6 @@ class ProductListView(View):
         if filter_options:
             product_condition &= Q(subcategory__in = filter_options)
         if search_content:
-            print(search_content)
             product_condition &= Q(name__icontains = search_content)|Q(serial_number__icontains = search_content)
         
         products        = Product.objects.filter(product_condition).order_by(sort_by.get(order_condition, 'id'))[offset:limit+offset]

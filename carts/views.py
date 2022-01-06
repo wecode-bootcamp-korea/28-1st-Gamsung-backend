@@ -54,24 +54,28 @@ class CartView(View):
 
     @login_required
     def patch(self, request):
-        data     = json.loads(request.body)
-        user     = request.user
-        product_id  = int(data['product_id'])
-        quantity = int(data['quantity'])
+        try:
+            data     = json.loads(request.body)
+            user     = request.user
+            product_id  = int(data['product_id'])
+            quantity = int(data['quantity'])
 
-        cart = Cart.objects.filter(user_id=user.id, product_id=product_id).get()
-        print(int(data['quantity']))
-        if quantity == 1:  
-            cart.quantity += 1
+            cart = Cart.objects.filter(user_id=user.id, product_id=product_id).get()
 
-        if quantity == -1:
-            if cart.quantity <= 1:
-                cart.quantity == 1
-            else:
-                cart.quantity -= 1
-     
-        cart.save()
-        return JsonResponse({"message" : "SUCCESS"}, status=200)
+            if quantity == 1:  
+                cart.quantity += 1
+
+            if quantity == -1:
+                if cart.quantity <= 1:
+                    cart.quantity == 1
+                else:
+                    cart.quantity -= 1
+
+            cart.save()
+            return JsonResponse({"message" : "SUCCESS"}, status=200)
+            
+        except Cart.DoesNotExist:
+            return JsonResponse({"message" : "INVALID_CART"}, status=400)
 
     @login_required
     def delete(self, request, id):

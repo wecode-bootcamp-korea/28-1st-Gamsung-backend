@@ -5,24 +5,27 @@ from django.http            import JsonResponse
 from django.views           import View
 
 from .models                import Cart
+from products.models        import Product
 from utils.login_required   import login_required
+from utils.validator        import validate_cart_quantity
+
 
 class CartView(View):
     @login_required
     def get(self, request):
         user      = request.user
-        carts     = Cart.objects.select_related('user__product').filter(user_id = user.id)
+        carts     = Cart.objects.select_related('product').filter(user_id = user.id)
+
         cart_list = [{
                 "id"            : cart.id,
                 "product_id"    : cart.product.id,
                 "product_name"  : cart.product.name,
                 "serial_number" : cart.product.serial_number,
                 "price"         : cart.product.price,
-                "storage"       : cart.product.storage,
                 "quantity"      : cart.quantity,
-                "main_url"      : cart.product.main_url,
+                "main_url"      : Product.objects.get(name=cart.product).mainimage_set.first().main_url,
             }for cart in carts]
-
+            
         return JsonResponse({"cart_list" : cart_list}, status=200)
 
     @login_required
@@ -30,14 +33,17 @@ class CartView(View):
         data       = json.loads(request.body)
         user       = request.user
         product_id = data['product_id']
-        quantity   = data['quantity']
+        quantity   = int(data['quantity'])
 
         cart, created  = Cart.objects.get_or_create(
             user_id    = user.id,
             product_id = product_id
         )
-
-        if created:            
+        
+        if not validate_cart_quantity(quantity):
+            return JsonResponse({"message" : "Bad Request"}, status=400)
+        
+        if created:
             cart.quantity = quantity
         else:
             cart.quantity += quantity
@@ -50,29 +56,32 @@ class CartView(View):
     def patch(self, request):
         data     = json.loads(request.body)
         user     = request.user
-        cart_id  = data['cart_id']
+        product_id  = int(data['product_id'])
         quantity = int(data['quantity'])
 
-        cart = Cart.objects.filter(user_id=user.id, cart_id=cart_id).get()
-    
-        if quantity == 1:      
+        cart = Cart.objects.filter(user_id=user.id, product_id=product_id).get()
+        print(int(data['quantity']))
+        if quantity == 1:  
             cart.quantity += 1
+
         if quantity == -1:
-            cart.quantity -= 1
-            if cart.quantity < 1:
-                pass
+            if cart.quantity <= 1:
+                cart.quantity == 1
+            else:
+                cart.quantity -= 1
+     
         cart.save()
+        return JsonResponse({"message" : "SUCCESS"}, status=200)
 
     @login_required
-    def delete(self, request):
+    def delete(self, request, id):
         try:
             user    = request.user
-            cart_id = request.GET.get('id')
 
-            cart = Cart.objects.get(user_id=user.id, id=cart_id)
+            cart = Cart.objects.get(user_id=user.id, product_id=id)
             cart.delete()
 
-            return JsonResponse({"message" : "DELETED"}, status=200)
+            return JsonResponse({"message" : "DELETED"}, status=204)
 
-        except KeyError:
-            JsonResponse({"message" : "KEY ERROR"}, status=400)
+        except Cart.DoesNotExist:
+            JsonResponse({"message" : "Cart Does Not Exist"}, status=404)

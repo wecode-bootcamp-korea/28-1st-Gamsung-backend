@@ -14,11 +14,12 @@ def login_required(func):
             user         = User.objects.get(id=payload['id'])
             request.user = user
 
+            return func(self, request, *args, **kwargs)
+
         except jwt.exceptions.DecodeError:
             return JsonResponse({'message' : 'Token is Invalid'}, status = 400)
 
         except User.DoesNotExist:
             return JsonResponse({'message' : 'User does not exist'}, status = 400)
 
-        return func(self, request, *args, **kwargs)
     return wrapper

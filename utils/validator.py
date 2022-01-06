@@ -1,4 +1,5 @@
 import re
+from django.http    import JsonResponse
 
 def validate_email(email):
     EMAIL_REGEX = "^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+\.[A-Za-z0-9.]+"
@@ -20,3 +21,6 @@ def validate_date_of_birth(date_of_birth):
     DATE_OF_BIRTH_REGEX = "^(\d{4})-(\d{2})-(\d{2})"
     return re.match(DATE_OF_BIRTH_REGEX, date_of_birth)
 
+def validate_cart_quantity(quantity):
+    if quantity >= 1:
+        return True
